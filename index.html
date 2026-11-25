@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Carnet de Fonte</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: une colonne pensée pour le téléphone ; le tableau défile sur le côté dans son propre cadre, colonne des exercices figée à gauche. */
+:root{
+  --bg:#f2f4f7; --surface:#ffffff; --surface-2:#e8ecf2; --mine:#edf1ff; --line:#d4dae4;
+  --fg:#131924; --muted:#5b6677; --accent:#2346c4; --accent-fg:#ffffff;
+  --up:#17804a; --up-bg:#daf2e3; --warn:#8f5300; --warn-bg:#fbeed6; --danger:#b42318;
+  --s1:#2346c4; --s2:#cf5418; --s3:#17804a; --s4:#8a3fc2; --s5:#a67a00; --s6:#0b8592;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0e131a; --surface:#17202b; --surface-2:#202a37; --mine:#1b2540; --line:#2d3948;
+  --fg:#e7ecf3; --muted:#94a1b3; --accent:#86a2ff; --accent-fg:#0e131a;
+  --up:#55d18f; --up-bg:#143424; --warn:#f0b95c; --warn-bg:#3a2a10; --danger:#ff8a80;
+  --s1:#86a2ff; --s2:#ff8f5c; --s3:#55d18f; --s4:#c990f3; --s5:#e5c254; --s6:#52cad5;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0e131a; --surface:#17202b; --surface-2:#202a37; --mine:#1b2540; --line:#2d3948;
+  --fg:#e7ecf3; --muted:#94a1b3; --accent:#86a2ff; --accent-fg:#0e131a;
+  --up:#55d18f; --up-bg:#143424; --warn:#f0b95c; --warn-bg:#3a2a10; --danger:#ff8a80;
+  --s1:#86a2ff; --s2:#ff8f5c; --s3:#55d18f; --s4:#c990f3; --s5:#e5c254; --s6:#52cad5;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 40px}
+.wrap{max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.muted{color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+
+/* En-tête */
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.brand h1{font-family:var(--display);font-weight:700;font-size:2.1rem;line-height:1;letter-spacing:.01em;margin:0;text-transform:uppercase;text-wrap:balance}
+.brand h1 .plate{display:inline-block;width:.62em;height:.62em;border-radius:50%;border:.14em solid var(--accent);margin:0 .08em .06em;vertical-align:middle}
+.brand p{margin:4px 0 0;color:var(--muted);font-size:.86rem}
+.me-chip{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px 4px 4px;max-width:46%;min-width:0;flex:none}
+.me-chip img{width:26px;height:26px;border-radius:50%;flex:none}
+.me-chip span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;font-size:.88rem}
+
+/* Bandeaux */
+.note{border-radius:var(--r);padding:10px 14px;font-size:.9rem;background:var(--surface-2);color:var(--fg)}
+.note.warn{background:var(--warn-bg);color:var(--warn)}
+.join{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:10px}
+.join h2{font-family:var(--display);font-size:1.35rem;margin:0;text-transform:uppercase;letter-spacing:.02em}
+.join p{margin:0;color:var(--muted);font-size:.9rem}
+.join form{display:flex;gap:8px;flex-wrap:wrap}
+.join input{flex:1 1 160px;min-width:0}
+
+/* Filtres */
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 13px;font-size:.85rem;font-weight:500}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+
+/* Tableau */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:separate;border-spacing:0;width:100%;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:0;vertical-align:middle}
+tbody tr:last-child td,tbody tr:last-child th{border-bottom:0}
+thead th{font-weight:600;font-size:.8rem;padding:10px 8px;text-align:center;background:var(--surface);white-space:nowrap}
+thead th.mine{background:var(--mine)}
+.col-name{display:inline-flex;align-items:center;gap:6px;max-width:110px;border:0;background:none;padding:0;font-weight:600}
+.col-name span{overflow:hidden;text-overflow:ellipsis}
+.col-name small{font-weight:500;color:var(--muted)}
+.dot{width:9px;height:9px;border-radius:50%;flex:none}
+th.ex,thead th.ex-h{position:sticky;left:0;z-index:2;background:var(--surface);text-align:left;border-right:1px solid var(--line)}
+thead th.ex-h{font-family:var(--display);text-transform:uppercase;letter-spacing:.05em;font-size:.85rem;color:var(--muted)}
+th.ex{width:42%;min-width:136px;max-width:180px}
+th.ex button{display:block;width:100%;text-align:left;background:none;border:0;padding:9px 10px;font-weight:600;font-size:.9rem;line-height:1.25}
+th.ex button small{display:block;font-weight:400;color:var(--muted);font-size:.74rem;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+tr.grp th{background:var(--surface-2);text-align:left;padding:5px 10px;border-bottom:1px solid var(--line)}
+tr.grp th span{position:sticky;left:10px;font-family:var(--display);font-size:.86rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+td{min-width:78px;text-align:center}
+td.mine{background:var(--mine)}
+.cell{position:relative;width:100%;min-height:52px;border:0;background:none;padding:7px 6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+.cell b{font-size:1.02rem;font-weight:700;letter-spacing:-.01em}
+.cell b em{font-style:normal;font-weight:500;font-size:.72rem;color:var(--muted);margin-left:1px}
+.cell small{font-size:.74rem;color:var(--muted)}
+.cell .empty{color:var(--muted);opacity:.6}
+.cell .add{width:30px;height:30px;border:1.5px dashed var(--line);border-radius:8px;display:grid;place-items:center;color:var(--muted);font-size:1.1rem}
+.badge-up{position:absolute;top:4px;right:4px;min-width:20px;height:20px;border-radius:999px;background:var(--up-bg);color:var(--up);font-weight:800;font-size:.8rem;display:grid;place-items:center;line-height:1}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.8rem;color:var(--muted);align-items:center}
+.legend .badge-up{position:static;display:inline-grid;margin-right:4px}
+.bar{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;align-items:center}
+
+/* Boutons */
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 16px;font-weight:600}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+.btn.danger{color:var(--danger)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+input[type=text],input[type=number],select,textarea{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 12px;width:100%}
+textarea{resize:vertical;min-height:70px}
+
+/* Fiche (bottom sheet) */
+dialog{border:0;padding:0;background:var(--surface);color:var(--fg);width:100%;max-width:560px;max-height:88vh;margin:auto auto 0;border-radius:18px 18px 0 0;overflow:auto;
+  padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (min-width:640px){dialog{margin:auto;border-radius:18px}}
+dialog::backdrop{background:rgba(8,12,20,.5)}
+.sheet{padding:18px max(18px,env(safe-area-inset-left,0px)) 22px max(18px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.sheet-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.sheet-h h2{font-family:var(--display);font-size:1.6rem;line-height:1.05;margin:0;text-transform:uppercase;letter-spacing:.01em;text-wrap:balance}
+.sheet-h p{margin:4px 0 0;font-size:.86rem;color:var(--muted)}
+.x{border:0;background:var(--surface-2);border-radius:50%;width:34px;height:34px;flex:none;font-size:1.1rem;line-height:1}
+.stack{display:flex;flex-direction:column;gap:14px}
+.field{display:flex;flex-direction:column;gap:6px;font-size:.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.field > *:not(span){text-transform:none;letter-spacing:0;color:var(--fg);font-weight:400;font-size:1rem}
+.stepper{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center}
+.stepper button{border:1px solid var(--line);background:var(--surface-2);border-radius:10px;height:48px;min-width:62px;font-weight:700;font-variant-numeric:tabular-nums}
+.stepper .in{position:relative}
+.stepper input{height:48px;text-align:center;font-size:1.4rem;font-weight:700;padding-right:34px;font-variant-numeric:tabular-nums}
+.stepper .unit{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.9rem;font-weight:600}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row2 input{text-align:center;font-size:1.15rem;font-weight:600}
+.toggle{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:12px 14px;font-weight:600;text-align:left}
+.toggle .arrow{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--surface-2);color:var(--muted);font-weight:800;flex:none}
+.toggle[aria-pressed="true"]{border-color:var(--up);background:var(--up-bg);color:var(--up)}
+.toggle[aria-pressed="true"] .arrow{background:var(--up);color:var(--surface)}
+.toggle small{display:block;font-weight:400;color:var(--muted);font-size:.8rem}
+.actions{display:flex;gap:10px;justify-content:flex-end}
+.actions .btn{flex:1 1 0}
+.sec h3{font-family:var(--display);text-transform:uppercase;letter-spacing:.06em;font-size:.95rem;margin:0 0 8px;color:var(--muted)}
+.desc{margin:0;font-size:.95rem;max-width:62ch}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{background:var(--surface-2);border-radius:999px;padding:3px 10px;font-size:.78rem;font-weight:500}
+.hist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.hist li{display:grid;grid-template-columns:5.5em 1fr auto;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:.9rem;align-items:center;font-variant-numeric:tabular-nums}
+.hist li:last-child{border-bottom:0}
+.gain{color:var(--up);font-weight:700;font-size:.8rem;background:var(--up-bg);padding:1px 7px;border-radius:999px}
+.people{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.people li{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.people li:last-child{border-bottom:0}
+.people .who{min-width:0}
+.people .who b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.people .who small{color:var(--muted);font-size:.8rem}
+.people .val{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+.people .val small{display:block;font-weight:400;color:var(--muted);font-size:.78rem}
+.chart svg{width:100%;height:auto;display:block}
+.chart text{fill:var(--muted);font-size:10px;font-family:var(--body)}
+.chart .grid{stroke:var(--line);stroke-width:1}
+.keys{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:.8rem;margin-top:6px}
+.keys span{display:inline-flex;align-items:center;gap:5px}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:.9rem;font-weight:500;max-width:calc(100% - 32px);z-index:50;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+@media (prefers-reduced-motion:no-preference){dialog[open]{animation:up .18s ease-out}@keyframes up{from{transform:translateY(24px);opacity:.6}to{transform:none;opacity:1}}}
+</style>
+
+<div class="wrap" id="app"></div>
+<dialog id="sheet" aria-labelledby="sheet-title"></dialog>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+"use strict";
+/* ---------- Catalogue d'exercices (liste commune) ---------- */
+const GROUPS = ["Pectoraux","Dos","Jambes","Épaules","Bras","Abdos","Autres"];
+const CATALOG = [
+  {id:"dc",group:"Pectoraux",name:"Développé couché",muscles:"Pectoraux, triceps, deltoïdes antérieurs",desc:"Allongé sur le banc, omoplates serrées et pieds ancrés au sol. Descends la barre en contrôle jusqu'au bas des pectoraux, puis pousse en expirant."},
+  {id:"dci",group:"Pectoraux",name:"Développé incliné haltères",muscles:"Haut des pectoraux, deltoïdes antérieurs",desc:"Banc incliné à 30–45°. Descends les haltères jusqu'à hauteur de poitrine, coudes à environ 45° du buste. Poids indiqué : par haltère."},
+  {id:"dips",group:"Pectoraux",name:"Dips",muscles:"Bas des pectoraux, triceps",desc:"Buste légèrement penché vers l'avant pour cibler les pectoraux, plus droit pour les triceps. Poids indiqué : lest ajouté (0 = poids du corps)."},
+  {id:"ecarte",group:"Pectoraux",name:"Écarté à la poulie",muscles:"Pectoraux",desc:"Bras légèrement fléchis et fixes, ramène les poignées devant toi en arc de cercle. Charge modérée, cherche l'étirement et la contraction."},
+  {id:"traction",group:"Dos",name:"Tractions",muscles:"Grand dorsal, biceps",desc:"Prise en pronation un peu plus large que les épaules. Tire jusqu'à passer le menton au-dessus de la barre, redescends bras tendus. Poids indiqué : lest (0 = poids du corps)."},
+  {id:"tirage",group:"Dos",name:"Tirage vertical",muscles:"Grand dorsal, biceps",desc:"Poitrine sortie, tire la barre vers le haut de la poitrine sans balancer le buste. Remonte lentement."},
+  {id:"rowb",group:"Dos",name:"Rowing barre",muscles:"Épaisseur du dos, trapèzes, rhomboïdes",desc:"Buste penché à environ 45°, dos neutre. Tire la barre vers le nombril en serrant les omoplates."},
+  {id:"rowh",group:"Dos",name:"Rowing haltère un bras",muscles:"Grand dorsal, rhomboïdes",desc:"Un genou et une main sur le banc. Tire l'haltère vers la hanche, coude près du corps. Poids indiqué : par haltère."},
+  {id:"sdt",group:"Dos",name:"Soulevé de terre",muscles:"Ischios, fessiers, lombaires, tout le dos",desc:"Barre contre les tibias, dos neutre. Pousse le sol avec les jambes puis verrouille les hanches en haut. La technique passe avant la charge."},
+  {id:"squat",group:"Jambes",name:"Squat barre",muscles:"Quadriceps, fessiers, adducteurs",desc:"Barre sur les trapèzes, gainage serré. Descends au moins cuisses parallèles au sol, genoux dans l'axe des pieds, puis remonte."},
+  {id:"presse",group:"Jambes",name:"Presse à cuisses",muscles:"Quadriceps, fessiers",desc:"Pieds largeur d'épaules sur la plateforme. Descends sans décoller le bas du dos du dossier, ne verrouille pas les genoux en haut."},
+  {id:"sdtr",group:"Jambes",name:"Soulevé de terre roumain",muscles:"Ischio-jambiers, fessiers",desc:"Jambes presque tendues, pousse les hanches vers l'arrière en gardant la barre le long des cuisses. Remonte en serrant les fessiers."},
+  {id:"fentes",group:"Jambes",name:"Fentes haltères",muscles:"Quadriceps, fessiers",desc:"Grand pas en avant, genou arrière proche du sol, buste droit. Poids indiqué : par haltère."},
+  {id:"hipthrust",group:"Jambes",name:"Hip thrust",muscles:"Fessiers, ischio-jambiers",desc:"Haut du dos sur le banc, barre sur les hanches. Pousse jusqu'à aligner épaules, hanches et genoux, marque une pause en haut."},
+  {id:"legext",group:"Jambes",name:"Leg extension",muscles:"Quadriceps",desc:"Exercice d'isolation. Monte en contrôle et tiens une seconde jambes tendues."},
+  {id:"legcurl",group:"Jambes",name:"Leg curl",muscles:"Ischio-jambiers",desc:"Exercice d'isolation. Ramène les talons vers les fessiers sans décoller les hanches."},
+  {id:"mollets",group:"Jambes",name:"Mollets debout",muscles:"Mollets",desc:"Amplitude complète : talons bas en étirement, puis monte au maximum sur la pointe des pieds."},
+  {id:"dm",group:"Épaules",name:"Développé militaire",muscles:"Deltoïdes, triceps",desc:"Debout et gainé, pousse la barre au-dessus de la tête sans cambrer le bas du dos. La tête passe sous la barre en haut."},
+  {id:"elevlat",group:"Épaules",name:"Élévations latérales",muscles:"Deltoïdes latéraux",desc:"Monte les haltères sur les côtés jusqu'à hauteur d'épaules, coudes légèrement fléchis. Charge légère, pas d'élan. Poids indiqué : par haltère."},
+  {id:"facepull",group:"Épaules",name:"Face pull",muscles:"Deltoïdes postérieurs, coiffe des rotateurs",desc:"Corde à la poulie haute. Tire vers le visage en écartant les mains, coudes hauts. Bon pour la posture."},
+  {id:"curlb",group:"Bras",name:"Curl barre",muscles:"Biceps",desc:"Coudes fixes le long du corps, monte la barre sans élan du buste, redescends lentement."},
+  {id:"curlm",group:"Bras",name:"Curl marteau",muscles:"Biceps, brachial, avant-bras",desc:"Haltères en prise neutre (pouces vers le haut). Poids indiqué : par haltère."},
+  {id:"extri",group:"Bras",name:"Extension triceps poulie",muscles:"Triceps",desc:"Coudes collés au corps, pousse la corde vers le bas et écarte les mains en fin de mouvement."},
+  {id:"barrefront",group:"Bras",name:"Barre au front",muscles:"Triceps",desc:"Allongé, descends la barre vers le front en gardant les coudes fixes, puis tends les bras."},
+  {id:"crunchp",group:"Abdos",name:"Crunch à la poulie",muscles:"Grand droit de l'abdomen",desc:"À genoux face à la poulie haute, enroule la colonne vers le bas. Les hanches ne bougent pas."},
+  {id:"releve",group:"Abdos",name:"Relevé de jambes suspendu",muscles:"Abdos, fléchisseurs de hanche",desc:"Suspendu à la barre, monte les jambes sans balancer. Poids indiqué : lest éventuel (0 = poids du corps)."}
+];
+
+/* ---------- État ---------- */
+const S = {
+  mode:"init",          // init | remote | local | unavailable
+  db:null, user:null, me:null, canWrite:false,
+  lifters:{}, custom:[], names:{}, avatars:{},
+  myAvatar:"", myName:"",
+  filter:"all", loaded:false, stale:false, error:"",
+  writeChain:Promise.resolve()
+};
+const LS_KEY = "carnet-fonte-v1";
+
+/* ---------- Utilitaires ---------- */
+const $ = s => document.querySelector(s);
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const isNum = n => typeof n === "number" && isFinite(n);
+const fmtW = n => isNum(n) ? n.toLocaleString("fr-FR",{maximumFractionDigits:2}) : "–";
+const today = () => { const d = new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); };
+const parseD = s => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s||"")); return m ? new Date(+m[1], +m[2]-1, +m[3]) : null; };
+const fmtD = s => { const d = parseD(s); return d ? d.toLocaleDateString("fr-FR",{day:"numeric",month:"short",year: d.getFullYear()===new Date().getFullYear() ? undefined : "2-digit"}) : ""; };
+const clone = o => JSON.parse(JSON.stringify(o ?? {}));
+const toNum = v => { if (v === "" || v == null) return null; const n = Number(String(v).replace(",", ".")); return isFinite(n) ? n : null; };
+const setsReps = e => (isNum(e.s) && isNum(e.r)) ? `${e.s}×${e.r}` : isNum(e.r) ? `${e.r} reps` : isNum(e.s) ? `${e.s} séries` : "";
+
+let toastT;
+function toast(msg){ const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(()=>{ t.hidden = true; }, 3600); }
+
+function allExercises(){ return [...CATALOG, ...S.custom]; }
+function findEx(id){ return allExercises().find(e => e.id === id); }
+function entryOf(lid, exId){ const ex = S.lifters[lid] && S.lifters[lid].ex; const e = ex && ex[exId]; return (e && typeof e === "object") ? e : null; }
+function histOf(e){ return Array.isArray(e && e.hist) ? e.hist.filter(h => h && isNum(h.w) && parseD(h.d)) : []; }
+
+/* Ordre stable (même couleur pour chacun chez tout le monde) */
+function lifterIdsStable(){
+  return Object.keys(S.lifters).sort((a,b) => String(S.lifters[a].joined||"").localeCompare(String(S.lifters[b].joined||"")) || a.localeCompare(b));
+}
+function colorOf(id){ const i = lifterIdsStable().indexOf(id); return `var(--s${(Math.max(i,0) % 6) + 1})`; }
+function columns(){ const ids = lifterIdsStable(); return S.me && ids.includes(S.me) ? [S.me, ...ids.filter(i => i !== S.me)] : ids; }
+function nameOf(id){
+  const p = S.lifters[id] && typeof S.lifters[id].pseudo === "string" ? S.lifters[id].pseudo.trim() : "";
+  return p || S.names[id] || (id === S.me ? "Moi" : "Athlète");
+}
+function joined(){ return !!(S.me && S.lifters[S.me]); }
+function canEditMine(){ return joined() && S.canWrite; }
+
+/* Date de la dernière progression (poids qui monte) */
+function lastProgress(e){
+  const h = histOf(e); if (!h.length) return null;
+  for (let i = h.length - 1; i > 0; i--) if (h[i].w > h[i-1].w) return {d:h[i].d, gain:h[i].w - h[i-1].w};
+  return {d:h[0].d, first:true};
+}
+
+/* ---------- Rendu principal ---------- */
+function paint(){
+  const app = $("#app");
+  const wrap = app.querySelector(".tbl-wrap"); const sx = wrap ? wrap.scrollLeft : 0;
+  const cols = columns();
+  const exs = allExercises().filter(e => S.filter === "all" || e.group === S.filter);
+  const groupsPresent = GROUPS.filter(g => allExercises().some(e => e.group === g));
+
+  let h = `<header class="top"><div class="brand"><h1>Carnet de F<span class="plate" aria-hidden="true"></span>nte</h1><p>Charges de muscu en kg · toi et ta bande</p></div>`;
+  if (joined()) h += `<button class="me-chip" data-act="pseudo" aria-label="Modifier mon pseudo">${S.myAvatar ? `<img src="${esc(S.myAvatar)}" alt="">` : `<i class="dot" style="background:${colorOf(S.me)};width:26px;height:26px"></i>`}<span>${esc(nameOf(S.me))}</span></button>`;
+  h += `</header>`;
+
+  // Bandeaux d'état
+  if (S.mode === "init") h += `<div class="note">Chargement du tableau…</div>`;
+  if (S.mode === "local") h += `<div class="note">Mode local : tes charges sont enregistrées sur cet appareil uniquement.</div>`;
+  if (S.mode === "unavailable") h += `<div class="note warn">Le stockage partagé n'est pas disponible ici. Ouvre la page depuis claude.ai en étant connecté pour voir et saisir les charges.</div>`;
+  if (S.mode === "remote" && !S.me) h += `<div class="note warn">Connecte-toi à claude.ai pour ajouter tes propres charges. Tu peux consulter le tableau en attendant.</div>`;
+  if (S.mode === "remote" && S.me && !S.canWrite) h += `<div class="note warn">Tu peux consulter le tableau mais pas y écrire. Demande à la personne qui l'a partagé de te donner l'accès Contributeur, ou Éditeur si tu es hors de son organisation.</div>`;
+  if (S.stale) h += `<div class="note warn">Le tableau ne répond pas encore : ce qui s'affiche peut être en retard.</div>`;
+  if (S.error) h += `<div class="note warn">${esc(S.error)}</div>`;
+
+  if (S.mode === "remote" && S.me && S.canWrite && S.loaded && !joined()){
+    h += `<section class="join"><h2>Rejoins le tableau</h2><p>Une colonne à ton nom sera ajoutée. Chacun ne peut remplir que la sienne.</p>
+      <form id="f-join"><input type="text" id="in-join" maxlength="24" placeholder="Pseudo (facultatif)" autocomplete="nickname"><button class="btn primary" type="submit">Rejoindre</button></form></section>`;
+  }
+
+  // Filtres
+  h += `<nav class="chips" aria-label="Groupes musculaires"><button class="chip" data-act="filter" data-g="all" aria-pressed="${S.filter==="all"}">Tous</button>`;
+  for (const g of groupsPresent) h += `<button class="chip" data-act="filter" data-g="${esc(g)}" aria-pressed="${S.filter===g}">${esc(g)}</button>`;
+  h += `</nav>`;
+
+  // Tableau
+  h += `<div class="tbl-wrap"><table><thead><tr><th class="ex-h" scope="col">Exercice</th>`;
+  if (!cols.length) h += `<th scope="col" class="muted">${S.mode === "init" ? "…" : "Personne pour l'instant"}</th>`;
+  for (const id of cols){
+    const mine = id === S.me;
+    h += `<th scope="col" class="${mine ? "mine" : ""}">${mine ? `<button class="col-name" data-act="pseudo">` : `<span class="col-name">`}<i class="dot" style="background:${colorOf(id)}"></i><span>${esc(nameOf(id))}</span>${mine ? `<small>toi</small></button>` : `</span>`}</th>`;
+  }
+  h += `</tr></thead><tbody>`;
+  const span = Math.max(cols.length, 1) + 1;
+  for (const g of GROUPS){
+    const list = exs.filter(e => e.group === g); if (!list.length) continue;
+    h += `<tr class="grp"><th colspan="${span}" scope="colgroup"><span>${esc(g)}</span></th></tr>`;
+    for (const ex of list){
+      h += `<tr><th class="ex" scope="row"><button data-act="ex" data-id="${esc(ex.id)}">${esc(ex.name)}<small>${esc(ex.muscles)}</small></button></th>`;
+      if (!cols.length) h += `<td><span class="empty">–</span></td>`;
+      for (const id of cols){
+        const e = entryOf(id, ex.id); const mine = id === S.me;
+        const label = e && isNum(e.w) ? `${nameOf(id)} : ${fmtW(e.w)} kg ${setsReps(e)}${e.up ? ", à monter" : ""}` : `${nameOf(id)} : rien de saisi`;
+        h += `<td class="${mine ? "mine" : ""}"><button class="cell" data-act="${mine && canEditMine() ? "edit" : "ex"}" data-id="${esc(ex.id)}" aria-label="${esc(ex.name)}, ${esc(label)}">`;
+        if (e && isNum(e.w)){
+          h += `<b>${fmtW(e.w)}<em>kg</em></b>`;
+          const sr = setsReps(e); if (sr) h += `<small>${esc(sr)}</small>`;
+          if (e.up) h += `<span class="badge-up" aria-hidden="true">↑</span>`;
+        } else if (mine && canEditMine()) h += `<span class="add" aria-hidden="true">+</span>`;
+        else h += `<span class="empty">–</span>`;
+        h += `</button></td>`;
+      }
+      h += `</tr>`;
+    }
+  }
+  h += `</tbody></table></div>`;
+
+  h += `<div class="bar"><div class="legend"><span><span class="badge-up" aria-hidden="true">↑</span>tenter plus lourd la prochaine fois</span><span>Touche un exercice pour sa fiche et la progression de chacun.</span></div>`;
+  if (S.mode === "local" || (S.mode === "remote" && S.canWrite)) h += `<button class="btn" data-act="newex">+ Ajouter un exercice</button>`;
+  h += `</div>`;
+
+  app.innerHTML = h;
+  const w2 = app.querySelector(".tbl-wrap"); if (w2) w2.scrollLeft = sx;
+  const fj = $("#f-join"); if (fj) fj.addEventListener("submit", onJoin);
+}
+
+/* ---------- Interactions ---------- */
+$("#app").addEventListener("click", ev => {
+  const b = ev.target.closest("[data-act]"); if (!b) return;
+  const act = b.dataset.act;
+  if (act === "filter"){ S.filter = b.dataset.g; paint(); }
+  else if (act === "edit") openEdit(b.dataset.id);
+  else if (act === "ex") openExercise(b.dataset.id);
+  else if (act === "pseudo" && canEditMine()) openPseudo();
+  else if (act === "newex") openNewExercise();
+});
+
+async function onJoin(ev){
+  ev.preventDefault();
+  const pseudo = ($("#in-join").value || "").trim().slice(0,24);
+  await writeMine({pseudo, joined: today(), ex:{}});
+}
+
+/* ---------- Fiche ---------- */
+const dlg = $("#sheet");
+function openSheet(html){
+  dlg.innerHTML = `<div class="sheet">${html}</div>`;
+  dlg.querySelectorAll("[data-close]").forEach(b => b.addEventListener("click", () => dlg.close()));
+  if (!dlg.open) dlg.showModal();
+}
+dlg.addEventListener("click", ev => { if (ev.target === dlg) dlg.close(); });
+const head = (title, sub) => `<div class="sheet-h"><div><h2 id="sheet-title">${esc(title)}</h2>${sub ? `<p>${esc(sub)}</p>` : ""}</div><button class="x" data-close aria-label="Fermer">✕</button></div>`;
+
+function openEdit(exId){
+  const ex = findEx(exId); if (!ex) return;
+  const e = entryOf(S.me, exId) || {};
+  const h = histOf(e);
+  let html = head(ex.name, ex.muscles);
+  html += `<form id="f-edit" class="stack" novalidate>
+    <label class="field"><span>Charge</span>
+      <div class="stepper"><button type="button" data-step="-2.5" aria-label="Retirer 2,5 kg">−2,5</button>
+      <div class="in"><input id="in-w" type="number" inputmode="decimal" step="0.25" min="0" value="${isNum(e.w) ? e.w : ""}" placeholder="0" required><span class="unit">kg</span></div>
+      <button type="button" data-step="2.5" aria-label="Ajouter 2,5 kg">+2,5</button></div></label>
+    <div class="row2"><label class="field"><span>Séries</span><input id="in-s" type="number" inputmode="numeric" min="1" max="20" step="1" value="${isNum(e.s) ? e.s : ""}" placeholder="4"></label>
+      <label class="field"><span>Répétitions</span><input id="in-r" type="number" inputmode="numeric" min="1" max="100" step="1" value="${isNum(e.r) ? e.r : ""}" placeholder="8"></label></div>
+    <button type="button" id="tg-up" class="toggle" aria-pressed="${e.up ? "true" : "false"}"><span class="arrow" aria-hidden="true">↑</span><span>Tenter plus lourd la prochaine fois<small>Affiche une flèche dans ta case</small></span></button>
+    <div class="actions"><button type="button" class="btn" data-close>Annuler</button><button type="submit" class="btn primary">Enregistrer</button></div>
+  </form>`;
+  html += progressSection([S.me], ex.id, true);
+  openSheet(html);
+  const f = $("#f-edit"), inW = $("#in-w"), tg = $("#tg-up");
+  f.querySelectorAll("[data-step]").forEach(b => b.addEventListener("click", () => {
+    const cur = toNum(inW.value) ?? 0; inW.value = Math.max(0, Math.round((cur + Number(b.dataset.step)) * 100) / 100);
+  }));
+  tg.addEventListener("click", () => tg.setAttribute("aria-pressed", tg.getAttribute("aria-pressed") === "true" ? "false" : "true"));
+  f.addEventListener("submit", async ev => {
+    ev.preventDefault();
+    const w = toNum(inW.value);
+    if (w == null || w < 0 || w > 1000){ inW.focus(); toast("Indique une charge en kg (0 pour le poids du corps)."); return; }
+    const s = toNum($("#in-s").value), r = toNum($("#in-r").value);
+    await saveEntry(exId, w, s != null ? Math.round(s) : null, r != null ? Math.round(r) : null, tg.getAttribute("aria-pressed") === "true");
+    dlg.close(); toast("Enregistré");
+  });
+}
+
+function openExercise(exId){
+  const ex = findEx(exId); if (!ex) return;
+  let html = head(ex.name);
+  html += `<div class="tags">${ex.muscles.split(",").map(m => `<span class="tag">${esc(m.trim())}</span>`).join("")}</div>`;
+  if (ex.desc) html += `<p class="desc">${esc(ex.desc)}</p>`;
+  const ids = columns().filter(id => entryOf(id, exId));
+  html += progressSection(ids, exId, false);
+  const acts = [];
+  if (canEditMine()) acts.push(`<button class="btn primary" id="go-edit">${entryOf(S.me, exId) ? "Mettre à jour ma charge" : "Saisir ma charge"}</button>`);
+  if (ex.custom && ex.by && ex.by === S.me && (S.mode === "local" || S.canWrite)) acts.push(`<button class="btn danger" id="del-ex">Supprimer cet exercice</button>`);
+  if (acts.length) html += `<div class="actions">${acts.join("")}</div>`;
+  openSheet(html);
+  const ge = $("#go-edit"); if (ge) ge.addEventListener("click", () => openEdit(exId));
+  const de = $("#del-ex"); if (de) de.addEventListener("click", async () => {
+    if (de.dataset.armed !== "1"){ de.dataset.armed = "1"; de.textContent = "Confirmer la suppression"; return; }
+    await deleteCustom(ex); dlg.close(); toast("Exercice supprimé");
+  });
+}
+
+function progressSection(ids, exId, mineOnly){
+  const withData = ids.filter(id => histOf(entryOf(id, exId)).length || isNum((entryOf(id, exId)||{}).w));
+  if (!withData.length) return `<section class="sec"><h3>Progression</h3><p class="muted" style="margin:0">${mineOnly ? "Pas encore d'historique. Enregistre ta première charge." : "Personne n'a encore saisi de charge pour cet exercice."}</p></section>`;
+  let html = `<section class="sec"><h3>Progression</h3>`;
+  const series = withData.map(id => ({id, color: colorOf(id), name: nameOf(id), pts: histOf(entryOf(id, exId)).map(p => ({t: parseD(p.d).getTime(), w: p.w}))}));
+  html += `<div class="chart">${chartSVG(series)}`;
+  if (!mineOnly && series.length > 1) html += `<div class="keys">${series.map(s => `<span><i class="dot" style="background:${s.color}"></i>${esc(s.name)}</span>`).join("")}</div>`;
+  html += `</div>`;
+  if (mineOnly){
+    const h = histOf(entryOf(ids[0], exId));
+    const lp = lastProgress(entryOf(ids[0], exId));
+    if (lp) html += `<p class="muted" style="margin:10px 0 4px;font-size:.88rem">${lp.first ? "Premier enregistrement le " : "Dernière progression le "}<strong>${esc(fmtD(lp.d))}</strong></p>`;
+    html += `<ul class="hist">`;
+    for (let i = h.length - 1; i >= 0 && i >= h.length - 30; i--){
+      const p = h[i], prev = h[i-1]; const gain = prev && p.w > prev.w ? p.w - prev.w : 0;
+      html += `<li><span class="muted">${esc(fmtD(p.d))}</span><span><strong>${fmtW(p.w)} kg</strong> <span class="muted">${esc(setsReps(p))}</span></span>${gain ? `<span class="gain">↑ +${fmtW(gain)}</span>` : "<span></span>"}</li>`;
+    }
+    html += `</ul>`;
+  } else {
+    html += `<ul class="people">`;
+    for (const id of withData){
+      const e = entryOf(id, exId); const lp = lastProgress(e);
+      html += `<li><i class="dot" style="background:${colorOf(id)}"></i><div class="who"><b>${esc(nameOf(id))}${id === S.me ? ' <span class="muted" style="font-weight:400">(toi)</span>' : ""}</b><small>${lp ? (lp.first ? "depuis le " : "a progressé le ") + esc(fmtD(lp.d)) : ""}</small></div>
+        <div class="val">${fmtW(e.w)} kg${e.up ? ' <span class="gain">↑</span>' : ""}<small>${esc(setsReps(e))}</small></div></li>`;
+    }
+    html += `</ul>`;
+  }
+  return html + `</section>`;
+}
+
+/* Graphique simple : charge dans le temps, une ligne par personne */
+function chartSVG(series){
+  const pts = series.flatMap(s => s.pts); if (!pts.length) return "";
+  const W = 340, H = 160, pl = 36, pr = 12, pt = 10, pb = 24;
+  let t0 = Math.min(...pts.map(p => p.t)), t1 = Math.max(...pts.map(p => p.t));
+  if (t0 === t1){ t0 -= 3*864e5; t1 += 3*864e5; }
+  let w0 = Math.min(...pts.map(p => p.w)), w1 = Math.max(...pts.map(p => p.w));
+  const pad = w1 === w0 ? Math.max(2.5, w0 * .1) : (w1 - w0) * .15; w0 = Math.max(0, w0 - pad); w1 = w1 + pad;
+  const raw = (w1 - w0) / 3, p10 = Math.pow(10, Math.floor(Math.log10(raw)));
+  const step = [1,2,2.5,5,10].map(m => m * p10).find(s => s >= raw) || 10 * p10;
+  const X = t => pl + (t - t0) / (t1 - t0) * (W - pl - pr);
+  const Y = w => pt + (1 - (w - w0) / (w1 - w0)) * (H - pt - pb);
+  let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Évolution de la charge">`;
+  for (let v = Math.ceil(w0 / step) * step; v <= w1 + 1e-9; v += step){
+    g += `<line class="grid" x1="${pl}" x2="${W - pr}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}"/><text x="${pl - 6}" y="${(Y(v) + 3.5).toFixed(1)}" text-anchor="end">${fmtW(Math.round(v * 100) / 100)}</text>`;
+  }
+  const dl = t => new Date(t).toLocaleDateString("fr-FR",{day:"numeric",month:"short"});
+  g += `<text x="${pl}" y="${H - 6}" text-anchor="start">${esc(dl(t0))}</text><text x="${W - pr}" y="${H - 6}" text-anchor="end">${esc(dl(t1))}</text>`;
+  for (const s of series){
+    if (!s.pts.length) continue;
+    const d = s.pts.map((p, i) => `${i ? "L" : "M"}${X(p.t).toFixed(1)} ${Y(p.w).toFixed(1)}`).join(" ");
+    g += `<path d="${d}" fill="none" stroke="${s.color}" stroke-width="2.25" stroke-linejoin="round" stroke-linecap="round"/>`;
+    s.pts.forEach((p, i) => { const last = i === s.pts.length - 1; g += `<circle cx="${X(p.t).toFixed(1)}" cy="${Y(p.w).toFixed(1)}" r="${last ? 4.5 : 2.5}" fill="${s.color}"/>`; });
+  }
+  return g + `</svg>`;
+}
+
+function openPseudo(){
+  openSheet(head("Mon pseudo", "Le nom affiché en haut de ta colonne.") + `<form id="f-ps" class="stack"><label class="field"><span>Pseudo</span><input type="text" id="in-ps" maxlength="24" value="${esc((S.lifters[S.me]||{}).pseudo || "")}" placeholder="${esc(S.names[S.me] || "Ton prénom")}"></label>
+    <div class="actions"><button type="button" class="btn" data-close>Annuler</button><button class="btn primary" type="submit">Enregistrer</button></div></form>`);
+  $("#f-ps").addEventListener("submit", async ev => {
+    ev.preventDefault();
+    const mine = clone(S.lifters[S.me]); mine.pseudo = ($("#in-ps").value || "").trim().slice(0,24);
+    await writeMine(mine); dlg.close();
+  });
+}
+
+function openNewExercise(){
+  openSheet(head("Nouvel exercice", "Il sera ajouté à la liste commune.") + `<form id="f-nx" class="stack">
+    <label class="field"><span>Nom</span><input type="text" id="nx-name" maxlength="40" required placeholder="Ex. : Pull-over haltère"></label>
+    <label class="field"><span>Groupe</span><select id="nx-group">${GROUPS.map(g => `<option>${esc(g)}</option>`).join("")}</select></label>
+    <label class="field"><span>Muscles travaillés</span><input type="text" id="nx-mus" maxlength="80" placeholder="Ex. : Grand dorsal, pectoraux"></label>
+    <label class="field"><span>Description</span><textarea id="nx-desc" maxlength="400" placeholder="Comment le faire, points d'attention…"></textarea></label>
+    <div class="actions"><button type="button" class="btn" data-close>Annuler</button><button class="btn primary" type="submit">Ajouter</button></div></form>`);
+  $("#f-nx").addEventListener("submit", async ev => {
+    ev.preventDefault();
+    const name = $("#nx-name").value.trim(); if (!name){ $("#nx-name").focus(); return; }
+    const data = {name: name.slice(0,40), group: $("#nx-group").value, muscles: $("#nx-mus").value.trim().slice(0,80) || "–", desc: $("#nx-desc").value.trim().slice(0,400), by: S.me, created: Date.now()};
+    await addCustom(data); dlg.close(); S.filter = "all"; paint(); toast("Exercice ajouté");
+  });
+}
+
+/* ---------- Écritures ---------- */
+async function saveEntry(exId, w, s, r, up){
+  const mine = clone(S.lifters[S.me]); mine.ex = mine.ex || {};
+  const prev = mine.ex[exId] || {};
+  const hist = histOf(prev).map(h => ({d:h.d, w:h.w, s:h.s ?? null, r:h.r ?? null}));
+  if (prev.w !== w || (prev.s ?? null) !== s || (prev.r ?? null) !== r || !hist.length){
+    const d = today(); const row = {d, w, s, r};
+    if (hist.length && hist[hist.length-1].d === d) hist[hist.length-1] = row; else hist.push(row);
+  }
+  if (hist.length > 200) hist.splice(0, hist.length - 200);
+  mine.ex[exId] = {w, s, r, up: !!up, hist};
+  await writeMine(mine);
+}
+
+function writeMine(doc){
+  S.lifters = {...S.lifters, [S.me]: doc}; paint();
+  S.writeChain = S.writeChain.then(async () => {
+    if (S.mode === "local"){ saveLocal(); return; }
+    try { await S.db.doc("lifters/" + S.me).set(doc); }
+    catch (e){ handleWriteError(e); }
+  });
+  return S.writeChain;
+}
+function handleWriteError(e){
+  const code = e && e.code;
+  if (code === "invalid_argument" || code === "not_granted"){ S.canWrite = false; paint(); toast("Enregistrement refusé : tu n'as pas l'accès en écriture."); }
+  else if (code === "quota_exceeded") toast("Le tableau est plein. Supprime d'anciens exercices perso pour libérer de la place.");
+  else toast("Enregistrement impossible pour l'instant. Réessaie dans un moment.");
+}
+async function addCustom(data){
+  if (S.mode === "local"){ S.custom.push(normCustom("l" + Date.now(), data)); saveLocal(); return; }
+  try { await S.db.collection("exercises").add(data); } catch (e){ handleWriteError(e); }
+}
+async function deleteCustom(ex){
+  if (S.mode === "local"){ S.custom = S.custom.filter(c => c.id !== ex.id); saveLocal(); paint(); return; }
+  try { await S.db.doc("exercises/" + ex.docId).delete(); } catch (e){ handleWriteError(e); }
+}
+function normCustom(docId, d){
+  return {id: "c_" + docId, docId, custom: true, by: typeof d.by === "string" ? d.by : null,
+    name: String(d.name || "Exercice").slice(0,40), group: GROUPS.includes(d.group) ? d.group : "Autres",
+    muscles: String(d.muscles || "–").slice(0,80), desc: String(d.desc || "").slice(0,400), created: isNum(d.created) ? d.created : 0};
+}
+
+/* ---------- Mode local (copie GitHub hors claude.ai) ---------- */
+function startLocal(){
+  S.mode = "local"; S.me = "local"; S.canWrite = true;
+  let saved = null; try { saved = JSON.parse(localStorage.getItem(LS_KEY) || "null"); } catch {}
+  S.lifters = {local: (saved && saved.lifter) || {pseudo:"", joined: today(), ex:{}}};
+  S.custom = ((saved && saved.custom) || []).map(c => normCustom(c.docId || c.id, c));
+  S.loaded = true; paint();
+}
+function saveLocal(){
+  try { localStorage.setItem(LS_KEY, JSON.stringify({lifter: S.lifters.local, custom: S.custom})); }
+  catch { toast("Ce navigateur bloque l'enregistrement local."); }
+}
+
+/* ---------- Mode partagé (artefact claude.ai) ---------- */
+async function bootRemote(){
+  let db = null, user = null;
+  try { [db, user] = await Promise.all([window.claude.use("db"), window.claude.use("user")]); } catch {}
+  S.user = user;
+  if (!db){ S.mode = "unavailable"; paint(); return; }
+  S.db = db; S.mode = "remote";
+  if (user){
+    const me = await user.me();
+    S.me = me.id; S.myAvatar = me.avatarUrl || ""; S.myName = me.name || "";
+    const c = await user.can("data.write");
+    S.canWrite = !!S.me && c !== false;
+  }
+  paint();
+  const timer = setTimeout(() => { if (!S.loaded){ S.stale = true; paint(); } }, 10000);
+  db.collection("lifters").onSnapshot(snap => {
+    const m = {};
+    snap.docs.forEach(d => { if (d.exists){ const v = d.data(); if (v && typeof v === "object") m[d.id] = v; } });
+    S.lifters = m;
+    if (!snap.metadata.fromCache){ S.loaded = true; S.stale = false; clearTimeout(timer); }
+    paint(); refreshNames();
+  }, err => { clearTimeout(timer); S.loaded = true; S.error = err && err.code === "revoked" ? "L'accès à ce tableau a changé." : "Le tableau partagé ne répond plus. Recharge la page plus tard."; paint(); });
+  db.collection("exercises").onSnapshot(snap => {
+    S.custom = snap.docs.filter(d => d.exists).map(d => normCustom(d.id, d.data() || {})).sort((a,b) => a.created - b.created);
+    paint();
+  }, () => {});
+}
+async function refreshNames(){
+  if (!S.user) return;
+  const ids = Object.keys(S.lifters); if (!ids.length) return;
+  const ps = await S.user.profiles(ids);
+  let changed = false;
+  for (const id of ids){ const n = (ps[id] && ps[id].name) || ""; if (S.names[id] !== n){ S.names[id] = n; changed = true; } }
+  if (changed) paint();
+}
+
+/* ---------- Démarrage ---------- */
+paint();
+(function waitForHost(tries){
+  if (window.claude && typeof window.claude.use === "function") bootRemote();
+  else if (tries > 0) setTimeout(() => waitForHost(tries - 1), 150);
+  else startLocal();
+})(10);
+</script>
+
+</body>
+</html>
