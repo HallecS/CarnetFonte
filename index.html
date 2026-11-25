@@ -205,9 +205,21 @@ const S = {
   lifters:{}, custom:[], names:{}, avatars:{},
   myAvatar:"", myName:"",
   filter:"all", loaded:false, stale:false, error:"",
-  writeChain:Promise.resolve()
+  writeChain:Promise.resolve(),
+  platform:"", fb:null, unsubs:[]
 };
 const LS_KEY = "carnet-fonte-v1";
+/* Projet Firebase utilisé hors claude.ai (GitHub Pages). Cette config est publique par nature ;
+   la sécurité vient des règles Firestore (chacun n'écrit que sa colonne). */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDWRQrJ7_DWfSTjvP-krsIGgK8_SpaPRHw",
+  authDomain: "carnetfonte.firebaseapp.com",
+  projectId: "carnetfonte",
+  storageBucket: "carnetfonte.firebasestorage.app",
+  messagingSenderId: "925954245097",
+  appId: "1:925954245097:web:d8fcd87bc87d1332d00b78"
+};
+const FIREBASE_SDK = "https://www.gstatic.com/firebasejs/11.0.2/";
 
 /* ---------- Utilitaires ---------- */
 const $ = s => document.querySelector(s);
@@ -263,6 +275,7 @@ function paint(){
 
   // Bandeaux d'état
   if (S.mode === "init") h += `<div class="note">Chargement du tableau…</div>`;
+  if (S.mode === "signin") h += `<section class="join"><h2>Connecte-toi</h2><p>Connecte-toi avec ton compte Google pour voir le tableau de la bande et remplir ta colonne.</p><div><button class="btn primary" data-act="signin">Se connecter avec Google</button></div></section>`;
   if (S.mode === "local") h += `<div class="note">Mode local : tes charges sont enregistrées sur cet appareil uniquement.</div>`;
   if (S.mode === "unavailable") h += `<div class="note warn">Le stockage partagé n'est pas disponible ici. Ouvre la page depuis claude.ai en étant connecté pour voir et saisir les charges.</div>`;
   if (S.mode === "remote" && !S.me) h += `<div class="note warn">Connecte-toi à claude.ai pour ajouter tes propres charges. Tu peux consulter le tableau en attendant.</div>`;
@@ -272,7 +285,7 @@ function paint(){
 
   if (S.mode === "remote" && S.me && S.canWrite && S.loaded && !joined()){
     h += `<section class="join"><h2>Rejoins le tableau</h2><p>Une colonne à ton nom sera ajoutée. Chacun ne peut remplir que la sienne.</p>
-      <form id="f-join"><input type="text" id="in-join" maxlength="24" placeholder="Pseudo (facultatif)" autocomplete="nickname"><button class="btn primary" type="submit">Rejoindre</button></form></section>`;
+      <form id="f-join"><input type="text" id="in-join" maxlength="24" placeholder="Pseudo (facultatif)" autocomplete="nickname" value="${esc(S.platform === "firebase" ? (S.myName || "").split(" ")[0] : "")}"><button class="btn primary" type="submit">Rejoindre</button></form></section>`;
   }
 
   // Filtres
@@ -330,6 +343,7 @@ $("#app").addEventListener("click", ev => {
   else if (act === "ex") openExercise(b.dataset.id);
   else if (act === "pseudo" && canEditMine()) openPseudo();
   else if (act === "newex") openNewExercise();
+  else if (act === "signin") signInGoogle();
 });
 
 async function onJoin(ev){
@@ -458,7 +472,9 @@ function chartSVG(series){
 
 function openPseudo(){
   openSheet(head("Mon pseudo", "Le nom affiché en haut de ta colonne.") + `<form id="f-ps" class="stack"><label class="field"><span>Pseudo</span><input type="text" id="in-ps" maxlength="24" value="${esc((S.lifters[S.me]||{}).pseudo || "")}" placeholder="${esc(S.names[S.me] || "Ton prénom")}"></label>
-    <div class="actions"><button type="button" class="btn" data-close>Annuler</button><button class="btn primary" type="submit">Enregistrer</button></div></form>`);
+    <div class="actions"><button type="button" class="btn" data-close>Annuler</button><button class="btn primary" type="submit">Enregistrer</button></div>
+    ${S.platform === "firebase" ? `<button type="button" class="btn danger" id="signout">Se déconnecter</button>` : ""}</form>`);
+  const so = $("#signout"); if (so) so.addEventListener("click", () => { dlg.close(); S.fb.AU.signOut(S.fb.auth); });
   $("#f-ps").addEventListener("submit", async ev => {
     ev.preventDefault();
     const mine = clone(S.lifters[S.me]); mine.pseudo = ($("#in-ps").value || "").trim().slice(0,24);
@@ -506,7 +522,7 @@ function writeMine(doc){
 }
 function handleWriteError(e){
   const code = e && e.code;
-  if (code === "invalid_argument" || code === "not_granted"){ S.canWrite = false; paint(); toast("Enregistrement refusé : tu n'as pas l'accès en écriture."); }
+  if (code === "invalid_argument" || code === "not_granted" || code === "permission-denied"){ S.canWrite = false; paint(); toast("Enregistrement refusé : tu n'as pas l'accès en écriture."); }
   else if (code === "quota_exceeded") toast("Le tableau est plein. Supprime d'anciens exercices perso pour libérer de la place.");
   else toast("Enregistrement impossible pour l'instant. Réessaie dans un moment.");
 }
@@ -550,19 +566,66 @@ async function bootRemote(){
     const c = await user.can("data.write");
     S.canWrite = !!S.me && c !== false;
   }
+  startShared();
+}
+
+/* Abonnements aux données partagées (même code pour claude.ai et Firebase) */
+function startShared(){
+  S.unsubs.forEach(f => { try { f(); } catch {} }); S.unsubs = [];
+  S.loaded = false; S.stale = false; S.error = ""; S.lifters = {}; S.custom = [];
   paint();
+  const db = S.db;
   const timer = setTimeout(() => { if (!S.loaded){ S.stale = true; paint(); } }, 10000);
-  db.collection("lifters").onSnapshot(snap => {
+  S.unsubs.push(db.collection("lifters").onSnapshot(snap => {
     const m = {};
     snap.docs.forEach(d => { if (d.exists){ const v = d.data(); if (v && typeof v === "object") m[d.id] = v; } });
     S.lifters = m;
     if (!snap.metadata.fromCache){ S.loaded = true; S.stale = false; clearTimeout(timer); }
     paint(); refreshNames();
-  }, err => { clearTimeout(timer); S.loaded = true; S.error = err && err.code === "revoked" ? "L'accès à ce tableau a changé." : "Le tableau partagé ne répond plus. Recharge la page plus tard."; paint(); });
-  db.collection("exercises").onSnapshot(snap => {
+  }, err => { clearTimeout(timer); S.loaded = true; S.error = err && err.code === "revoked" ? "L'accès à ce tableau a changé." : err && err.code === "permission-denied" ? "La base a refusé la lecture : vérifie les règles Firestore." : "Le tableau partagé ne répond plus. Recharge la page plus tard."; paint(); }));
+  S.unsubs.push(db.collection("exercises").onSnapshot(snap => {
     S.custom = snap.docs.filter(d => d.exists).map(d => normCustom(d.id, d.data() || {})).sort((a,b) => a.created - b.created);
     paint();
-  }, () => {});
+  }, () => {}));
+}
+
+/* ---------- Mode Firebase (version GitHub Pages) ---------- */
+async function bootFirebase(){
+  let A, AU, FS;
+  try {
+    [A, AU, FS] = await Promise.all([import(FIREBASE_SDK + "firebase-app.js"), import(FIREBASE_SDK + "firebase-auth.js"), import(FIREBASE_SDK + "firebase-firestore.js")]);
+  } catch {
+    startLocal(); S.error = "Le serveur du tableau partagé est injoignable : tes charges sont enregistrées sur cet appareil en attendant."; paint(); return;
+  }
+  const app = A.initializeApp(FIREBASE_CONFIG);
+  const auth = AU.getAuth(app), fs = FS.getFirestore(app);
+  S.platform = "firebase"; S.fb = {auth, AU};
+  // Petit adaptateur : même forme que la base claude.ai utilisée plus haut
+  const wrap = qs => ({docs: qs.docs.map(d => ({id: d.id, exists: true, data: () => d.data()})), metadata: {fromCache: qs.metadata.fromCache}});
+  S.db = {
+    doc: p => { const r = FS.doc(fs, p); return {set: d => FS.setDoc(r, d), delete: () => FS.deleteDoc(r)}; },
+    collection: p => { const c = FS.collection(fs, p); return {add: d => FS.addDoc(c, d), onSnapshot: (next, err) => FS.onSnapshot(c, qs => next(wrap(qs)), err)}; }
+  };
+  AU.onAuthStateChanged(auth, u => {
+    if (!u){
+      S.unsubs.forEach(f => { try { f(); } catch {} }); S.unsubs = [];
+      S.mode = "signin"; S.me = null; S.canWrite = false; S.lifters = {}; S.custom = []; S.loaded = false; S.myAvatar = ""; S.myName = "";
+      paint(); return;
+    }
+    S.mode = "remote"; S.me = u.uid; S.canWrite = true;
+    S.myName = u.displayName || ""; S.myAvatar = u.photoURL || "";
+    startShared();
+  });
+}
+function signInGoogle(){
+  if (!S.fb) return;
+  S.fb.AU.signInWithPopup(S.fb.auth, new S.fb.AU.GoogleAuthProvider()).catch(e => {
+    const c = e && e.code;
+    if (c === "auth/popup-closed-by-user" || c === "auth/cancelled-popup-request") return;
+    if (c === "auth/popup-blocked") toast("Le navigateur a bloqué la fenêtre de connexion. Autorise les pop-ups pour ce site.");
+    else if (c === "auth/unauthorized-domain") toast("Ce site n'est pas autorisé dans Firebase (Authentication → Domaines autorisés).");
+    else toast("Connexion impossible pour l'instant. Réessaie.");
+  });
 }
 async function refreshNames(){
   if (!S.user) return;
@@ -578,7 +641,7 @@ paint();
 (function waitForHost(tries){
   if (window.claude && typeof window.claude.use === "function") bootRemote();
   else if (tries > 0) setTimeout(() => waitForHost(tries - 1), 150);
-  else startLocal();
+  else bootFirebase();
 })(10);
 </script>
 
