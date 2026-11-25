@@ -5,7 +5,7 @@ Tableau de suivi des charges en musculation, pour soi et ses amis.
 - Un tableau avec les exercices en lignes et une colonne par personne : charge (kg), séries × répétitions.
 - Une flèche ↑ pour se rappeler de tenter plus lourd à la séance suivante.
 - Un historique daté de chaque changement, avec la date de la dernière progression et une courbe par exercice.
-- Une liste commune de 26 exercices décrits (muscles travaillés, consignes), et la possibilité d'en ajouter.
+- Une liste commune de 55 exercices décrits (muscles travaillés, consignes), et la possibilité d'en ajouter.
 - Pensé pour le téléphone, en thème clair ou sombre.
 
 ## Utilisation

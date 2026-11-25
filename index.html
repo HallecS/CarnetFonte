@@ -195,7 +195,37 @@ const CATALOG = [
   {id:"extri",group:"Bras",name:"Extension triceps poulie",muscles:"Triceps",desc:"Coudes collés au corps, pousse la corde vers le bas et écarte les mains en fin de mouvement."},
   {id:"barrefront",group:"Bras",name:"Barre au front",muscles:"Triceps",desc:"Allongé, descends la barre vers le front en gardant les coudes fixes, puis tends les bras."},
   {id:"crunchp",group:"Abdos",name:"Crunch à la poulie",muscles:"Grand droit de l'abdomen",desc:"À genoux face à la poulie haute, enroule la colonne vers le bas. Les hanches ne bougent pas."},
-  {id:"releve",group:"Abdos",name:"Relevé de jambes suspendu",muscles:"Abdos, fléchisseurs de hanche",desc:"Suspendu à la barre, monte les jambes sans balancer. Poids indiqué : lest éventuel (0 = poids du corps)."}
+  {id:"releve",group:"Abdos",name:"Relevé de jambes suspendu",muscles:"Abdos, fléchisseurs de hanche",desc:"Suspendu à la barre, monte les jambes sans balancer. Poids indiqué : lest éventuel (0 = poids du corps)."},
+  /* Ajouts (ids stables : ne pas les renommer, les charges y sont rattachées) */
+  {id:"dch",group:"Pectoraux",name:"Développé couché haltères",muscles:"Pectoraux, triceps, deltoïdes antérieurs",desc:"Plus d'amplitude qu'à la barre. Descends les haltères sur les côtés de la poitrine, puis pousse en les rapprochant. Poids indiqué : par haltère."},
+  {id:"dcd",group:"Pectoraux",name:"Développé décliné",muscles:"Bas des pectoraux, triceps",desc:"Banc décliné, pieds calés. Descends la barre vers le bas des pectoraux et pousse à la verticale."},
+  {id:"chestpress",group:"Pectoraux",name:"Chest press (machine)",muscles:"Pectoraux, triceps",desc:"Poignées à hauteur du milieu de la poitrine, dos plaqué au dossier. Pousse sans verrouiller les coudes."},
+  {id:"pecdeck",group:"Pectoraux",name:"Pec deck (butterfly)",muscles:"Pectoraux",desc:"Bras légèrement fléchis, ramène les poignées devant toi et serre une seconde. Retour lent jusqu'à l'étirement."},
+  {id:"tirageh",group:"Dos",name:"Tirage horizontal (poulie basse)",muscles:"Milieu du dos, grand dorsal, rhomboïdes",desc:"Assis, dos droit. Tire la poignée vers le nombril en serrant les omoplates, sans basculer le buste en arrière."},
+  {id:"tbar",group:"Dos",name:"Rowing T-bar",muscles:"Épaisseur du dos, trapèzes",desc:"Buste penché, dos neutre, tire la barre vers le bas de la poitrine. Poids indiqué : disques chargés."},
+  {id:"pullover",group:"Dos",name:"Pull-over à la poulie",muscles:"Grand dorsal",desc:"Debout face à la poulie haute, bras presque tendus. Ramène la barre vers les cuisses en arc de cercle."},
+  {id:"shrug",group:"Dos",name:"Shrugs",muscles:"Trapèzes",desc:"Barre ou haltères bras tendus, monte les épaules vers les oreilles, tiens une seconde, redescends lentement. Pas de rotation des épaules."},
+  {id:"lombaires",group:"Dos",name:"Extension lombaires",muscles:"Lombaires, fessiers, ischios",desc:"Sur le banc à 45°, descends le buste en gardant le dos neutre, remonte jusqu'à l'alignement. Poids indiqué : lest tenu contre la poitrine."},
+  {id:"frontsquat",group:"Jambes",name:"Squat avant",muscles:"Quadriceps, fessiers, gainage",desc:"Barre posée à l'avant des épaules, coudes hauts. Buste plus droit qu'au squat classique."},
+  {id:"bulgare",group:"Jambes",name:"Squat bulgare",muscles:"Quadriceps, fessiers",desc:"Pied arrière posé sur un banc, descends sur la jambe avant jusqu'à ce que le genou arrière frôle le sol. Poids indiqué : par haltère."},
+  {id:"hack",group:"Jambes",name:"Hack squat",muscles:"Quadriceps",desc:"Dos et épaules plaqués à la machine, descends profond en contrôle, genoux dans l'axe des pieds."},
+  {id:"goblet",group:"Jambes",name:"Goblet squat",muscles:"Quadriceps, fessiers",desc:"Un haltère ou une kettlebell tenu contre la poitrine. Descends entre les genoux, buste droit. Bon pour apprendre le squat."},
+  {id:"adduct",group:"Jambes",name:"Adducteurs (machine)",muscles:"Adducteurs",desc:"Ramène les jambes l'une vers l'autre en contrôle, sans à-coups."},
+  {id:"abduct",group:"Jambes",name:"Abducteurs (machine)",muscles:"Moyen fessier",desc:"Écarte les jambes contre la résistance, buste légèrement penché vers l'avant pour mieux cibler les fessiers."},
+  {id:"molletsassis",group:"Jambes",name:"Mollets assis",muscles:"Mollets (soléaire)",desc:"Genoux fléchis à 90°, monte sur la pointe des pieds puis descends en étirement complet."},
+  {id:"dmh",group:"Épaules",name:"Développé haltères assis",muscles:"Deltoïdes, triceps",desc:"Assis dos calé, pousse les haltères au-dessus de la tête sans les entrechoquer. Poids indiqué : par haltère."},
+  {id:"arnold",group:"Épaules",name:"Développé Arnold",muscles:"Deltoïdes (antérieurs et latéraux)",desc:"Pars paumes vers toi devant le visage, tourne les poignets en poussant pour finir paumes vers l'avant. Poids indiqué : par haltère."},
+  {id:"oiseau",group:"Épaules",name:"Oiseau (buste penché)",muscles:"Deltoïdes postérieurs, haut du dos",desc:"Buste penché presque à l'horizontale, écarte les haltères sur les côtés, coudes légèrement fléchis. Charge légère."},
+  {id:"elevfront",group:"Épaules",name:"Élévations frontales",muscles:"Deltoïdes antérieurs",desc:"Monte l'haltère ou le disque devant toi jusqu'à hauteur des yeux, sans élan."},
+  {id:"tiragementon",group:"Épaules",name:"Tirage menton",muscles:"Deltoïdes latéraux, trapèzes",desc:"Prise plutôt large, tire la barre le long du corps jusqu'au bas de la poitrine, coudes au-dessus des mains. Ne monte pas plus haut si l'épaule gêne."},
+  {id:"curlinc",group:"Bras",name:"Curl incliné haltères",muscles:"Biceps (longue portion)",desc:"Allongé sur un banc incliné, bras pendants derrière le buste. Monte sans avancer les coudes. Poids indiqué : par haltère."},
+  {id:"pupitre",group:"Bras",name:"Curl pupitre",muscles:"Biceps",desc:"Bras posés sur le pupitre, monte la barre EZ et redescends presque bras tendus, en contrôle."},
+  {id:"curlpoulie",group:"Bras",name:"Curl à la poulie",muscles:"Biceps",desc:"Poulie basse, coudes fixes. La tension reste constante sur tout le mouvement."},
+  {id:"extnuque",group:"Bras",name:"Extension nuque haltère",muscles:"Triceps (longue portion)",desc:"Haltère tenu à deux mains au-dessus de la tête, descends derrière la nuque en gardant les coudes serrés."},
+  {id:"dipsbanc",group:"Bras",name:"Dips entre deux bancs",muscles:"Triceps",desc:"Mains sur un banc derrière toi, descends jusqu'à 90° aux coudes. Poids indiqué : disque posé sur les cuisses (0 = poids du corps)."},
+  {id:"roue",group:"Abdos",name:"Roue abdominale",muscles:"Grand droit, gainage",desc:"À genoux, déroule la roue vers l'avant en gardant le dos plat, puis reviens en contractant les abdos. Poids indiqué : 0, note plutôt les répétitions."},
+  {id:"russian",group:"Abdos",name:"Russian twist",muscles:"Obliques",desc:"Assis buste incliné, pieds décollés si possible, tourne le buste d'un côté à l'autre avec un disque ou un haltère."},
+  {id:"bucheron",group:"Abdos",name:"Bûcheron à la poulie",muscles:"Obliques, gainage",desc:"Poulie haute, tire en diagonale vers la hanche opposée en tournant le buste, bras tendus."}
 ];
 
 /* ---------- État ---------- */
